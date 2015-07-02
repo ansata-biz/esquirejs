@@ -131,91 +131,100 @@
         }
     }
 
-    /**
-     * Adds callback that will be invoked only when all dependencies are resolved
-     * Dependencies are passed to callback as arguments
-     * @param deps string[] Dependencies list
-     * @param callback Function
-     */
-    var esquire = function (deps, callback) {
-        log('required: ' + deps.join(','));
-        addCallback(deps, callback);
-        tick();
-    };
+    var esquire = {
+        /**
+         * Adds callback that will be invoked only when all dependencies are resolved
+         * Dependencies are passed to callback as arguments
+         * @param deps string[] Dependencies list
+         * @param callback Function
+         */
+        require: function (deps, callback) {
+            log('required: ' + deps.join(','));
+            addCallback(deps, callback);
+            tick();
+        },
 
-    /**
-     * Enables debug mode: verbose console messages are output
-     * @param toggle
-     */
-    esquire.debug = function (toggle) {
-        isDebug = toggle;
-    };
+        /**
+         * Enables debug mode: verbose console messages are output
+         * @param toggle
+         */
+        debug: function (toggle) {
+            isDebug = toggle;
+        },
 
-    /**
-     * Defines a new module (dependency)
-     *
-     * @param name string Module name
-     * @param deps string[] OPTIONAL Dependencies list
-     * @param def Function|{*} Module definition (Function will be invoked, plain value directly stored)
-     */
-    var define = function (name, deps, def) {
-        if (arguments.length <= 2) // independent define(name, def), events define(event_name)
-        {
-            def = deps;
-            declareModule(name, [], def);
-        } else {
-            var callback = isFunction(def) ? def : null;
-            var definition = isFunction(def) ? null : def;
-            declareModule(name, deps, definition, callback);
-        }
-        tick();
-    };
+        /**
+         * Defines a new module (dependency)
+         *
+         * @param name string Module name
+         * @param deps string[] OPTIONAL Dependencies list
+         * @param def Function|{*} Module definition (Function will be invoked, plain value directly stored)
+         */
+        define: function (name, deps, def) {
+            if (arguments.length <= 2) // independent define(name, def), events define(event_name)
+            {
+                def = deps;
+                declareModule(name, [], def);
+            } else {
+                var callback = isFunction(def) ? def : null;
+                var definition = isFunction(def) ? null : def;
+                declareModule(name, deps, definition, callback);
+            }
+            tick();
+        },
 
-    esquire.onError = function (name) {
-        log_error('Error loading module: ' + name);
-    };
+        /**
+         * Used as error handler for attached <script> tags
+         * @param name Module name
+         */
+        errorHandler: function (name) {
+            log_error('Error loading module: ' + name);
+        },
 
-    /**
-     * Includes external script and invokes callback when it loads
-     *
-     * @param url string
-     * @param callback Function
-     */
-    esquire.include = function (url, callback) {
-        var e = document.createElement('script');
-        e.src = url;
-        e.type = 'text/javascript';
-        e.async = true;
-        if (callback) {
-            e.onload = callback;
-        }
-        e.onError = function () {
-            log_error('Error loading script: ' + url)
-        };
+        /**
+         * Attaches external script to <head> and invokes callback when it loads
+         *
+         * @param url string
+         * @param callback Function
+         */
+        include: function (url, callback) {
+            var e = document.createElement('script');
+            e.src = url;
+            e.type = 'text/javascript';
+            e.async = true;
+            if (callback) {
+                e.onload = callback;
+            }
+            e.onError = function () {
+                log_error('Error loading script: ' + url)
+            };
 
-        document.head.appendChild(e);
-    };
+            document.head.appendChild(e);
+        },
 
-    /**
-     * Returns waiting dependencies names (for debugging)
-     * @returns Array string[]
-     */
-    esquire.waiting = function () {
-        var waiting = [];
-        for (var i = 0; i < callbacks.length; i++) {
-            if (callbacks[i].waiting) {
-                for (var k = 0; k < callbacks[i].deps.length; k++) {
-                    var module = callbacks[i].deps[k];
-                    if (!modules.hasOwnProperty(module) || !modules[module].resolved)
-                        waiting.push(module);
+        /**
+         * Returns waiting dependencies names (for debugging)
+         * @returns Array string[]
+         */
+        waiting: function () {
+            var waiting = [];
+            for (var i = 0; i < callbacks.length; i++) {
+                if (callbacks[i].waiting) {
+                    for (var k = 0; k < callbacks[i].deps.length; k++) {
+                        var module = callbacks[i].deps[k];
+                        if (!modules.hasOwnProperty(module) || !modules[module].resolved)
+                            waiting.push(module);
+                    }
                 }
             }
+            return waiting;
         }
-        return waiting;
     };
 
-    define('include', function() { return esquire.include; });
+    // expose "esquire" and "esquire.include" as modules
+    esquire.define('esquire', esquire);
+    esquire.define('include', esquire.include);
 
-    root.require = esquire;
-    root.define = define;
+    root.esquire = esquire;
+    root.require = esquire.require;
+    root.define = esquire.define;
 })(window);
