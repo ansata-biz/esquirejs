@@ -29,7 +29,6 @@ It will be defined later, somewhere in future.
     App.init(); 
   });
 </script>
-```
 
 <script>
   /* Dependency, which will be defined later. Like jQuery or Google Maps */
@@ -40,4 +39,4 @@ It will be defined later, somewhere in future.
     define("jquery", jQuery.noConflict()); // this will resolve "app" module, and *require* call above will complete
   }, 5000);
 </script>
-
+```
