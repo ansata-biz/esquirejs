@@ -68,7 +68,7 @@
      * @param def  Definition
      * @param callback Function
      */
-    function initModule(name, deps, def, callback) {
+    function declareModule(name, deps, def, callback) {
         modules[name] = {
             resolved: false,
             name: name,
@@ -77,11 +77,10 @@
             callback: callback
         };
         if (typeof deps === 'undefined') {
-            resolve(name, []);
-        }
-        else {
+            markAsResolved(name, []);
+        } else {
             addCallback(deps, function (/* dep1, dep2, ... */) {
-                resolve(name, arguments);
+                markAsResolved(name, arguments);
             });
         }
     }
@@ -94,7 +93,7 @@
      * @param name
      * @param deps
      */
-    function resolve(name, deps) {
+    function markAsResolved(name, deps) {
         if (modules.hasOwnProperty(name)) {
             var module = modules[name];
             if (!module.resolved) {
@@ -128,7 +127,7 @@
         if (resolved) {
             setTimeout(tick, 0); // release thread
         } else {
-            log('waiting: ' + require.waiting());
+            log('waiting: ' + inquire.waiting());
         }
     }
 
@@ -138,7 +137,7 @@
      * @param deps string[] Dependencies list
      * @param callback Function
      */
-    var require = function (deps, callback) {
+    var inquire = function (deps, callback) {
         log('required: ' + deps.join(','));
         addCallback(deps, callback);
         tick();
@@ -148,7 +147,7 @@
      * Enables debug mode: verbose console messages are output
      * @param toggle
      */
-    require.debug = function (toggle) {
+    inquire.debug = function (toggle) {
         isDebug = toggle;
     };
 
@@ -163,16 +162,16 @@
         if (arguments.length <= 2) // independent define(name, def), events define(event_name)
         {
             def = deps;
-            initModule(name, [], def);
+            declareModule(name, [], def);
         } else {
             var callback = isFunction(def) ? def : null;
             var definition = isFunction(def) ? null : def;
-            initModule(name, deps, definition, callback);
+            declareModule(name, deps, definition, callback);
         }
         tick();
     };
 
-    require.onError = function (name) {
+    inquire.onError = function (name) {
         log_error('Error loading module: ' + name);
     };
 
@@ -182,7 +181,7 @@
      * @param url string
      * @param callback Function
      */
-    require.include = function (url, callback) {
+    inquire.include = function (url, callback) {
         var e = document.createElement('script');
         e.src = url;
         e.type = 'text/javascript';
@@ -201,7 +200,7 @@
      * Returns waiting dependencies names (for debugging)
      * @returns Array string[]
      */
-    require.waiting = function () {
+    inquire.waiting = function () {
         var waiting = [];
         for (var i = 0; i < callbacks.length; i++) {
             if (callbacks[i].waiting) {
@@ -215,8 +214,8 @@
         return waiting;
     };
 
-    define('include', function() { return require.include; });
+    define('include', function() { return inquire.include; });
 
-    root.require = require;
+    root.require = inquire;
     root.define = define;
 })(window);
