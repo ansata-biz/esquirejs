@@ -1,0 +1,28 @@
+{
+  "name": "inquirejs",
+  "version": "0.1.0",
+  "homepage": "https://github.com/ansata-biz/inquirejs",
+  "authors": [
+    "Ivan Voskoboinyk <ivan.voskoboinyk@gmail.com>",
+    "Alexander Gorbatenko <alex@ansata.biz>"
+  ],
+  "description": "AMD system for pre-built JavaScript bundles with delayed module provision",
+  "main": "inquire.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "AMD",
+    "require",
+    "async",
+    "provide"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
