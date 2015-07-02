@@ -127,7 +127,7 @@
         if (resolved) {
             setTimeout(tick, 0); // release thread
         } else {
-            log('waiting: ' + inquire.waiting());
+            log('waiting: ' + esquire.waiting());
         }
     }
 
@@ -137,7 +137,7 @@
      * @param deps string[] Dependencies list
      * @param callback Function
      */
-    var inquire = function (deps, callback) {
+    var esquire = function (deps, callback) {
         log('required: ' + deps.join(','));
         addCallback(deps, callback);
         tick();
@@ -147,7 +147,7 @@
      * Enables debug mode: verbose console messages are output
      * @param toggle
      */
-    inquire.debug = function (toggle) {
+    esquire.debug = function (toggle) {
         isDebug = toggle;
     };
 
@@ -171,7 +171,7 @@
         tick();
     };
 
-    inquire.onError = function (name) {
+    esquire.onError = function (name) {
         log_error('Error loading module: ' + name);
     };
 
@@ -181,7 +181,7 @@
      * @param url string
      * @param callback Function
      */
-    inquire.include = function (url, callback) {
+    esquire.include = function (url, callback) {
         var e = document.createElement('script');
         e.src = url;
         e.type = 'text/javascript';
@@ -200,7 +200,7 @@
      * Returns waiting dependencies names (for debugging)
      * @returns Array string[]
      */
-    inquire.waiting = function () {
+    esquire.waiting = function () {
         var waiting = [];
         for (var i = 0; i < callbacks.length; i++) {
             if (callbacks[i].waiting) {
@@ -214,8 +214,8 @@
         return waiting;
     };
 
-    define('include', function() { return inquire.include; });
+    define('include', function() { return esquire.include; });
 
-    root.require = inquire;
+    root.require = esquire;
     root.define = define;
 })(window);

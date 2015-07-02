@@ -1,4 +1,4 @@
-# inquire.js
+# esquire.js
 
 AMD system for pre-built JavaScript bundles with delayed module provision.
 
@@ -6,7 +6,7 @@ When one of your modules requires another undefined-yet module
 - require.js will try to load it
 - almond.js will fail
 
-But inquire.js *will wait*.
+But esquire.js *will wait*.
 
 # Example
 

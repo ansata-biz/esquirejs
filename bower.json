@@ -1,13 +1,13 @@
 {
-  "name": "inquirejs",
+  "name": "esquirejs",
   "version": "0.1.0",
-  "homepage": "https://github.com/ansata-biz/inquirejs",
+  "homepage": "https://github.com/ansata-biz/esquirejs",
   "authors": [
     "Ivan Voskoboinyk <ivan.voskoboinyk@gmail.com>",
     "Alexander Gorbatenko <alex@ansata.biz>"
   ],
   "description": "AMD system for pre-built JavaScript bundles with delayed module provision",
-  "main": "inquire.js",
+  "main": "esquire.js",
   "moduleType": [
     "globals"
   ],
